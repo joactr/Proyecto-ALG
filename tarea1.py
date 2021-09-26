@@ -5,9 +5,15 @@ def dp_levenshtein_backwards(x, y):
     tam_x = len(x) + 1
     tam_y = len(y) + 1
     tam_max = max(tam_x,tam_y)
-    list1 =  [1]
+    matriz = np.zeros ((tam_x, tam_y))
 
+    for x1 in range(tam_x):
+        matriz[x1, 0] = x1
+    for y1 in range(tam_y):
+        matriz[y1, 0] = y1
     
+    
+    list1 =  []    
     list2 = []
 
 
