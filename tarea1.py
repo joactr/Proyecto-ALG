@@ -10,7 +10,7 @@ def dp_levenshtein_backwards(x, y):
     for x1 in range(tam_x):
         matriz[x1, 0] = x1
     for y1 in range(tam_y):
-        matriz[y1, 0] = y1
+        matriz[0, y1] = y1
     
     for s1 in range(1, tam_x):
         for s2 in range(1, tam_y):
@@ -27,7 +27,6 @@ def dp_levenshtein_backwards(x, y):
                     matriz[s1,s2-1] + 1
                 )
 
-    print(matriz)
     return matriz[tam_x - 1, tam_y - 1]
 
 def dp_restricted_damerau_backwards(x, y):
