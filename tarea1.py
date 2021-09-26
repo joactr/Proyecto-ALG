@@ -5,10 +5,10 @@ def dp_levenshtein_backwards(x, y):
     tam_x = len(x) + 1
     tam_y = len(y) + 1
     tam_max = max(tam_x,tam_y)
-    list1 =  
+    list1 =  []
 
     
-    list2 = 
+    list2 = []
 
 
 
@@ -17,7 +17,7 @@ def dp_levenshtein_backwards(x, y):
 
     return 0 # reemplazar/completar
 
-    def dp_restricted_damerau_backwards(x, y):
+def dp_restricted_damerau_backwards(x, y):
     return 0 # reemplazar/completar
 
 def dp_intermediate_damerau_backwards(x, y):
