@@ -4,30 +4,30 @@ import numpy as np
 def dp_levenshtein_backwards(x, y):
     tam_x = len(x) + 1
     tam_y = len(y) + 1
-
-    matriz = np.zeros ((tam_x, tam_y))
-
-    for x1 in range(tam_x):
-        matriz[x1, 0] = x1
-    for y1 in range(tam_y):
-        matriz[0, y1] = y1
     
-    for s1 in range(1, tam_x):
-        for s2 in range(1, tam_y):
-            if x[s1 - 1] == y[s2 - 1]:
-                matriz[s1,s2] = min(
-                    matriz[s1-1,s2] + 1,
-                    matriz[s1-1,s2-1],
-                    matriz[s1,s2-1] + 1
+    vector1 = [(n) for n in range(tam_y)]
+    vector2 = [(1) for k in range(tam_y)]
+    
+    for i in range(1, tam_x):
+        for j in range(1, tam_y):
+            k = j
+            if x[i - 1] == y[j - 1]:
+                vector2[j] = min(
+                    vector1[k] + 1,
+                    vector1[k-1],
+                    vector2[j-1] + 1
                 )
             else:
-                matriz[s1,s2]=min(
-                    matriz[s1-1,s2] + 1,
-                    matriz[s1-1,s2-1] + 1,
-                    matriz[s1,s2-1] + 1
+                vector2[j] = min(
+                    vector1[k] + 1,
+                    vector1[k-1] + 1,
+                    vector2[j-1] + 1
                 )
+            k += 1
+        vector1 = vector2
+        vector2 = [(i + 1) for n in range(tam_y)]
+    return vector1[tam_y - 1]
 
-    return matriz[tam_x - 1, tam_y - 1]
 
 def dp_restricted_damerau_backwards(x, y):
     return 0 # reemplazar/completar
