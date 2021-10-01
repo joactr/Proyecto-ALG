@@ -7,7 +7,7 @@ def dp_levenshtein_backwards(x, y):
     tam_max = max(tam_x,tam_y)
     list1 =  
 
-    
+
     list2 = 
 
 
