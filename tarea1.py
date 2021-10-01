@@ -3,21 +3,33 @@ import numpy as np
 
 def dp_levenshtein_backwards(x, y):
     tam_x = len(x) + 1
-    tam_y = len(y) + 1
-    tam_max = max(tam_x,tam_y)
-    list1 =  
+    tam_y = len(y) + 1 
+    
+    vector1 = [(n) for n in range(tam_y)]
+    vector2 = [(1) for k in range(tam_y)]
+    
+    for i in range(1, tam_x):
+        for j in range(1, tam_y):
+            k = j
+            if x[i - 1] == y[j - 1]:
+                vector2[j] = min(
+                    vector1[k] + 1,
+                    vector1[k-1],
+                    vector2[j-1] + 1
+                )
+            else:
+                vector2[j] = min(
+                    vector1[k] + 1,
+                    vector1[k-1] + 1,
+                    vector2[j-1] + 1
+                )
+            k += 1
+        vector1 = vector2
+        vector2 = [(i + 1) for n in range(tam_y)]
+    return vector1[tam_y - 1]
 
 
-    list2 = 
-
-
-
-
-
-
-    return 0 # reemplazar/completar
-
-    def dp_restricted_damerau_backwards(x, y):
+def dp_restricted_damerau_backwards(x, y):
     return 0 # reemplazar/completar
 
 def dp_intermediate_damerau_backwards(x, y):
