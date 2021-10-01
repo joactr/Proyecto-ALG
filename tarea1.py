@@ -30,7 +30,7 @@ def dp_levenshtein_backwards(x, y):
 
 
 def dp_restricted_damerau_backwards(x, y):
-    return 0 # reemplazar/completar
+    return 0 # reemplazar/completar si
 
 def dp_intermediate_damerau_backwards(x, y):
     return 0 # reemplazar/completar
