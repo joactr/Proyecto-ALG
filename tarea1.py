@@ -86,13 +86,12 @@ def dp_intermediate_damerau_backwards(x, y):
                     current[j - 1] + 1,
                     prev2[j - 2] + 1 if j > 1 and x[i - 2] == y[j - 1] and x[i - 1] == y[j - 2] else 100000000000,
                     prev3[j - 3] + 2 if j > 2 and x[i - 3] == y[j - 1] and x[i - 1] == y[j - 3] else 100000000000
-                    
                 )
 
-    prev1 = prev2
-    prev2 = prev3
-    prev3 = current
-    current = [(i+1) for _ in range(tam_y)]
+        prev3 = prev2
+        prev2 = prev1
+        prev1 = current
+        current = [(i+1) for _ in range(tam_y)]
     
     return prev1[tam_y - 1]
         
