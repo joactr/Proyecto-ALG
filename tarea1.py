@@ -1,3 +1,4 @@
+
 import numpy as np
 
 
@@ -11,18 +12,11 @@ def dp_levenshtein_backwards(x, y):
     for i in range(1, tam_x):
         for j in range(1, tam_y):
             k = j
-            if x[i - 1] == y[j - 1]:
-                current[j] = min(
-                    pre[k] + 1,
-                    pre[k-1],
-                    current[j-1] + 1
-                )
-            else:
-                current[j] = min(
-                    pre[k] + 1,
-                    pre[k-1] + 1,
-                    current[j-1] + 1
-                )
+            current[j] = min(
+                pre[k] + 1,
+                pre[k-1] if x[i - 1] == y[j - 1] else  pre[k-1] + 1,
+                current[j-1] + 1
+            )
             k += 1
         pre = current
         current = [(i + 1) for n in range(tam_y)]
@@ -32,78 +26,75 @@ def dp_levenshtein_backwards(x, y):
 def dp_restricted_damerau_backwards(x, y):
     tam_x = len(x) + 1
     tam_y = len(y) + 1
-    
     prev2 = [(n) for n in range(tam_y)]
     prev1 = [(1) for k in range(tam_y)]
-    current = [(1) for k in range(tam_y)]
+    current = [(2) for k in range(tam_y)]
 
     for i in range(1, tam_y):
-        if x[0] == y[i-1]:
-            prev1[i] = min(
-                prev2[i] + 1,
-                prev2[i-1],
-                prev1[i-1] + 1
-            )
-        else:
-            prev1[i] = min(
-                prev2[i] + 1,
-                prev2[i-1] + 1,
-                prev1[i-1] + 1
-            )
+        prev1[i] = min(
+            prev2[i] + 1,
+            prev2[i-1] if x[0] == y[i-1] else prev2[i-1] + 1,
+            prev1[i-1] + 1
+        )
 
-    if (len(x) > 1):
-        for i in range(1, tam_x):
+    if (len(x) > 1 and len(y) > 1):
+        for i in range(2, tam_x):
             for j in range(1, tam_y):
-                k = j
-                if x[i - 1] == y[j - 1]:
-                    current[j] = min(
-                        prev2[k] + 1,
-                        prev2[k-1],
-                        prev1[j-1] + 1
-                    )
-                else:
-                    current[j] = min(
-                        prev2[k] + 1,
-                        prev2[k-1] + 1,
-                        prev1[j-1] + 1
-                    )
-                k += 1
-            print(prev2)
-            prev2 = prev1
-            prev1 = current
+                current[j] = min(
+                    prev1[j] + 1,
+                    prev1[j-1] if x[i - 1] == y[j - 1] else prev1[j-1] + 1,
+                    current[j-1] + 1,
+                    prev2[j - 2] + 1 if x[i - 2] == y[j - 1] and x[i - 1] == y[j - 2] else 100000000000
+                )
+                
+            prev2, prev1 = prev1, current
             current = [(i + 1) for n in range(tam_y)]
 
-    print(prev2)
-    print(prev1)
     return prev1[tam_y - 1]
 
 
-    return 0 # reemplazar/completar
+    
 
 def dp_intermediate_damerau_backwards(x, y):
-    i = len(x)
-    j = len(y) 
+    tam_x = len(x) + 1
+    tam_y = len(y) + 1
+    prev3 = [(n) for n in range(tam_y)]
+    prev2 = [(1) for n in range(tam_y)]
+    prev1 = [(2) for k in range(tam_y)]
+    current = [(3) for k in range(tam_y)]
 
-    if i == j == 0:
-        return 0
-        
-    else:
-        select_min = []
-        if i > 0:
-            select_min.append(dp_intermediate_damerau_backwards(x[:-1], y) + 1)
-        if j > 0:
-            select_min.append(dp_intermediate_damerau_backwards(x, y[:-1]) + 1)
-        
-        if i > 0 and j > 0:
-            if x[-1] == y[-1]:
-                select_min.append(dp_intermediate_damerau_backwards(x[:-1], y[:-1]))
-            else:
-                select_min.append(dp_intermediate_damerau_backwards(x[:-1], y[:-1]) + 1)
-        
-        if i > 1 and j > 1 and x[-2] == y[-1] and x[-1] == y[-2]:
-            select_min.append(dp_intermediate_damerau_backwards(x[:-2], x[:-2] + 1))
+    for i in range(1, tam_y):
+        prev2[i] = min(
+            prev3[i] + 1,
+            prev3[i-1] if x[0] == y[i-1] else prev3[i-1] + 1,
+            prev2[i-1] + 1
+        )
+    if (len(y) > 1 and len(x) > 1):
+        for j in range(1, tam_y):
+                prev1[j] = min(
+                    prev2[j] + 1,
+                    prev2[j - 1] if x[1] == y[j - 1] else prev2[j - 1] + 1,
+                    prev1[j - 1] + 1,
+                    prev3[j - 2] + 1 if x[0] == y[j - 1] and x[1] == y[j - 2] else 100000000000
+                )
+           
+    for i in range(3, tam_x):
+        for j in range(1, tam_y):
+            current[j] = min(
+                    prev1[j] + 1,
+                    prev1[j - 1] if x[i - 1] == y[j - 1] else prev1[j - 1] + 1,
+                    current[j - 1] + 1,
+                    prev2[j - 2] + 1 if j > 1 and x[i - 2] == y[j - 1] and x[i - 1] == y[j - 2] else 100000000000,
+                    prev3[j - 3] + 2 if j > 2 and x[i - 3] == y[j - 1] and x[i - 1] == y[j - 3] else 100000000000
+                    
+                )
 
-        return min(select_min)
+    prev1 = prev2
+    prev2 = prev3
+    prev3 = current
+    current = [(i+1) for _ in range(tam_y)]
+    
+    return prev1[tam_y - 1]
         
                     
 test = [("algoritmo","algortimo"),
