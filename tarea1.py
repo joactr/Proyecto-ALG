@@ -32,7 +32,7 @@ def dp_levenshtein_backwards(x, y):
 def dp_restricted_damerau_backwards(x, y):
     tam_x = len(x) + 1
     tam_y = len(y) + 1
-    #max = max(tam_x,tam_y)
+    
     prev2 = [(n) for n in range(tam_y)]
     prev1 = [(1) for k in range(tam_y)]
     current = [(1) for k in range(tam_y)]
