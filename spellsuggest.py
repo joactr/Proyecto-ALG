@@ -27,7 +27,7 @@ class SpellSuggester:
 
         Se tokeniza por palabras el fichero de texto,
         se eliminan palabras duplicadas y se ordena
-        lexicogrÃ¡ficamente.
+        lexicográficamente.
 
         Args:
             vocab_file (str): ruta del fichero de texto para cargar el vocabulario.
@@ -55,7 +55,13 @@ class SpellSuggester:
         assert distance in ["levenshtein", "restricted", "intermediate"]
 
         results = {} # diccionario termino:distancia
-        # TODO
+        if threshold==None: threshold = np.inf
+
+        for term_to_compare in self.vocabulary:
+            if abs(len(term) - len(term_to_compare)) <= threshold:
+                results[term_to_compare] = distance(term, term_to_compare, threshold)
+        
+        results = sorted(results.items(), key=lambda)
         return results
 
 class TrieSpellSuggester(SpellSuggester):
