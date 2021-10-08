@@ -38,7 +38,8 @@ class SpellSuggester:
             vocab.discard('') # por si acaso
             return sorted(vocab)
     
-    def cota(self, x, y)
+    def cota(self, x, y):
+        """"""
 
     def suggest(self, term, distance="levenshtein", threshold=None):
 

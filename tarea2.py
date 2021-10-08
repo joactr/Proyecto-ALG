@@ -1,4 +1,4 @@
-import numpy as np
+
 
 def dp_levenshtein_threshold(x, y, th):
     tam_x = len(x) + 1
@@ -44,7 +44,7 @@ def dp_restricted_damerau_threshold(x, y, th):
                     prev1[j] + 1,
                     prev1[j-1] if x[i - 1] == y[j - 1] else prev1[j-1] + 1, #sustitucion
                     current[j-1] + 1, 
-                    prev2[j - 2] + 1 if x[i - 2] == y[j - 1] and x[i - 1] == y[j - 2] else np.inf
+                    prev2[j - 2] + 1 if x[i - 2] == y[j - 1] and x[i - 1] == y[j - 2] else float("inf")
                 )
                 if (min(prev1) > th): 
                     return th + 1
@@ -82,7 +82,7 @@ def dp_intermediate_damerau_threshold(x, y, th):
                     prev2[j] + 1,
                     prev2[j - 1] if x[1] == y[j - 1] else prev2[j - 1] + 1,
                     prev1[j - 1] + 1,
-                    prev3[j - 2] + 1 if x[0] == y[j - 1] and x[1] == y[j - 2] else np.inf
+                    prev3[j - 2] + 1 if x[0] == y[j - 1] and x[1] == y[j - 2] else float("inf")
                 )
             
     for i in range(3, tam_x):
@@ -91,9 +91,9 @@ def dp_intermediate_damerau_threshold(x, y, th):
                     prev1[j] + 1,
                     prev1[j - 1] if x[i - 1] == y[j - 1] else prev1[j - 1] + 1,
                     current[j - 1] + 1,
-                    prev2[j - 3] + 2 if j > 0 and x[i - 2] == y[j - 1] and x[i - 1] == y[j - 3] else np.inf,
-                    prev2[j - 2] + 1 if j > 0 and x[i - 2] == y[j - 1] and x[i - 1] == y[j - 2] else np.inf,
-                    prev3[j - 2] + 2 if j > 0 and x[i - 3] == y[j - 1] and x[i - 1] == y[j - 2] else np.inf
+                    prev2[j - 3] + 2 if j > 0 and x[i - 2] == y[j - 1] and x[i - 1] == y[j - 3] else float("inf"),
+                    prev2[j - 2] + 1 if j > 0 and x[i - 2] == y[j - 1] and x[i - 1] == y[j - 2] else float("inf"),
+                    prev3[j - 2] + 2 if j > 0 and x[i - 3] == y[j - 1] and x[i - 1] == y[j - 2] else float("inf")
                 )
             if (min(prev1) > th):
                 return th + 1
