@@ -58,10 +58,12 @@ class SpellSuggester:
         if threshold==None: threshold = np.inf
 
         for term_to_compare in self.vocabulary:
-            if abs(len(term) - len(term_to_compare)) <= threshold:
+            if abs(len(term) - len(term_to_compare)) <= threshold:  # 
                 results[term_to_compare] = distance(term, term_to_compare, threshold)
         
-        results = sorted(results.items(), key=lambda)
+        results = sorted(results.items(), key=lambda x:x[1])
+        results = dict(results)
+        
         return results
 
 class TrieSpellSuggester(SpellSuggester):
