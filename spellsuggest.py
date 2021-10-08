@@ -37,6 +37,8 @@ class SpellSuggester:
             vocab = set(tokenizer.split(fr.read().lower()))
             vocab.discard('') # por si acaso
             return sorted(vocab)
+    
+    def cota(self, x, y)
 
     def suggest(self, term, distance="levenshtein", threshold=None):
 
@@ -55,15 +57,13 @@ class SpellSuggester:
         assert distance in ["levenshtein", "restricted", "intermediate"]
 
         results = {} # diccionario termino:distancia
-        if threshold==None: threshold = np.inf
+        if threshold==None: threshold = float("inf")
 
         for term_to_compare in self.vocabulary:
-            if abs(len(term) - len(term_to_compare)) <= threshold:  # 
+            if abs(len(term) - len(term_to_compare)) <= threshold:  # Si la diferencia de tamaño es mayor al treshold, el termino no se tiene en cuenta
                 results[term_to_compare] = distance(term, term_to_compare, threshold)
-        
-        results = sorted(results.items(), key=lambda x:x[1])
-        results = dict(results)
-        
+            
+
         return results
 
 class TrieSpellSuggester(SpellSuggester):
@@ -76,7 +76,7 @@ class TrieSpellSuggester(SpellSuggester):
     
 if __name__ == "__main__":
     spellsuggester = TrieSpellSuggester("./corpora/quijote.txt")
-    print(spellsuggester.suggest("alÃ¡bese"))
+    print(spellsuggester.suggest("alábese"))
     # cuidado, la salida es enorme print(suggester.trie)
 
     
