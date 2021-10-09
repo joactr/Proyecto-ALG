@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import re
-
+import tarea2 
 from trie import Trie
+import json
+import numpy as np
 
 class SpellSuggester:
 
@@ -39,7 +41,20 @@ class SpellSuggester:
             return sorted(vocab)
     
     def cota(self, x, y):
-        """"""
+        """
+            Metodo que devuelve un threshold en base a la comparacion de vectores de ocurrencias.
+            Args
+            x (str): primer termino a comparar
+            y (str): segundo termino a comparar
+        """
+        # Crear vectores de ocurrencias
+        letters = list(set(x).union(set(y)))    
+        vx = [x.count(l) for l in letters]
+        vy = [y.count(l) for l in letters]
+
+        v_dif = [x - y for x, y in zip(vx, vy)]
+
+        return max(sum(np.array([x for x in v_dif if x > 0 ])), sum(np.array([-x for x in v_dif if x < 0])))
 
     def suggest(self, term, distance="levenshtein", threshold=None):
 
@@ -56,14 +71,22 @@ class SpellSuggester:
                 o filtrando la salida de las distancias de la tarea 2
         """
         assert distance in ["levenshtein", "restricted", "intermediate"]
-
+    
         results = {} # diccionario termino:distancia
         if threshold==None: threshold = float("inf")
 
-        for term_to_compare in self.vocabulary:
-            if abs(len(term) - len(term_to_compare)) <= threshold:  # Si la diferencia de tamaño es mayor al treshold, el termino no se tiene en cuenta
-                results[term_to_compare] = distance(term, term_to_compare, threshold)
-            
+        for term_voc in self.vocabulary:
+            dist = 0
+            if abs(len(term) - len(term_voc)) <= threshold:  # Si la diferencia de tamaño es mayor al treshold, el termino no se tiene en cuenta
+                if distance == 'levenshtein':
+                    dist = tarea2.dp_levenshtein_threshold(term, term_voc, threshold)
+                elif distance == 'restricted':
+                    dist = tarea2.dp_restricted_damerau_threshold(term, term_voc, threshold)
+                else:
+                    dist = tarea2.dp_intermediate_damerau_threshold(term, term_voc, threshold)
+                
+                if dist <= threshold:
+                    results[term_voc] = dist
 
         return results
 
@@ -76,8 +99,21 @@ class TrieSpellSuggester(SpellSuggester):
         self.trie = Trie(self.vocabulary)
     
 if __name__ == "__main__":
-    spellsuggester = TrieSpellSuggester("./corpora/quijote.txt")
-    print(spellsuggester.suggest("alábese"))
+
+    spellsuggester = SpellSuggester("./corpora/quijote.txt")
+    for distance in ['levenshtein','restricted','intermediate']:
+        destiny =  f'result_{distance}_quijote.txt'
+        with open(destiny, "w", encoding='utf-8') as fw:
+            for palabra in ("casa", "senor", "jabón", "constitución", "ancho",
+                            "savaedra", "vicios", "quixot", "s3afg4ew"):
+                for threshold in range(1, 6):
+                    resul = spellsuggester.suggest(palabra,distance=distance,threshold=threshold)
+                    numresul = len(resul)
+                    resul = " ".join(sorted(f'{v}:{k}' for k,v in resul.items()))
+                    fw.write(f'{palabra}\t{threshold}\t{numresul}\t{resul}\n')
+                    
+    # spellsuggester = TrieSpellSuggester("./corpora/quijote.txt")
+    # print(spellsuggester.suggest("alábese"))
     # cuidado, la salida es enorme print(suggester.trie)
 
     

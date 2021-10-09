@@ -30,13 +30,15 @@ def dp_restricted_damerau_threshold(x, y, th):
     prev1 = [(1) for k in range(tam_y)]
     current = [(2) for k in range(tam_y)]
 
-    for i in range(1, tam_y):
-        prev1[i] = min(
-            prev2[i] + 1,
-            prev2[i-1] if x[0] == y[i-1] else prev2[i-1] + 1, #sustitucion
-            prev1[i-1] + 1
-        )
-
+    if(len(x) >= 1):
+        for i in range(1, tam_y):
+            prev1[i] = min(
+                prev2[i] + 1,
+                prev2[i-1] if x[0] == y[i-1] else prev2[i-1] + 1, #sustitucion
+                prev1[i-1] + 1
+            )
+    else: return len(y)
+    if(min(prev2)> th): return th + 1
     if (len(x) > 1 and len(y) > 1):
         for i in range(2, tam_x):
             for j in range(1, tam_y):
@@ -62,21 +64,23 @@ def dp_intermediate_damerau_threshold(x, y, th):
     prev1 = [(2) for k in range(tam_y)]
     current = [(3) for k in range(tam_y)]
 
-    for i in range(1, tam_y):
-        if x[0] == y[i-1]:
-            prev2[i] = min(
-                prev3[i] + 1,
-                prev3[i-1],
-                prev2[i-1] + 1
-            )
-        else:
-            prev2[i] = min(
-                prev3[i] + 1,
-                prev3[i-1] + 1,
-                prev2[i-1] + 1
-            )
+    if (len(x) > 0):
+        for i in range(1, tam_y):
+            if x[0] == y[i-1]:
+                prev2[i] = min(
+                    prev3[i] + 1,
+                    prev3[i-1],
+                    prev2[i-1] + 1
+                )
+            else:
+                prev2[i] = min(
+                    prev3[i] + 1,
+                    prev3[i-1] + 1,
+                    prev2[i-1] + 1
+                )
+    else: return len(y)
 
-    if (len(y) > 1 and len(x) > 1):
+    if (len(x) > 1):
         for j in range(1, tam_y):
                 prev1[j] = min(
                     prev2[j] + 1,
@@ -84,17 +88,18 @@ def dp_intermediate_damerau_threshold(x, y, th):
                     prev1[j - 1] + 1,
                     prev3[j - 2] + 1 if x[0] == y[j - 1] and x[1] == y[j - 2] else float("inf")
                 )
-            
+    else: return len(y) - (1 if a[0]==b[0] else 0)
     for i in range(3, tam_x):
         for j in range(1, tam_y):
             current[j] = min(
                     prev1[j] + 1,
                     prev1[j - 1] if x[i - 1] == y[j - 1] else prev1[j - 1] + 1,
                     current[j - 1] + 1,
-                    prev2[j - 3] + 2 if j > 0 and x[i - 2] == y[j - 1] and x[i - 1] == y[j - 3] else float("inf"),
-                    prev2[j - 2] + 1 if j > 0 and x[i - 2] == y[j - 1] and x[i - 1] == y[j - 2] else float("inf"),
-                    prev3[j - 2] + 2 if j > 0 and x[i - 3] == y[j - 1] and x[i - 1] == y[j - 2] else float("inf")
+                    prev2[j - 3] + 2 if j > 2 and x[i - 2] == y[j - 1] and x[i - 1] == y[j - 3] else float("inf"),
+                    prev2[j - 2] + 1 if j > 1 and x[i - 2] == y[j - 1] and x[i - 1] == y[j - 2] else float("inf"),
+                    prev3[j - 2] + 2 if j > 1 and x[i - 3] == y[j - 1] and x[i - 1] == y[j - 2] else float("inf")
                 )
+                # 0 0 0
             if (min(prev1) > th):
                 return th + 1
 
@@ -115,7 +120,7 @@ test = [
         ]
 
 thrs = range(1,4)
-
+"""""
 for threshold in thrs:
     print(f"thresholds: {threshold:3}")
     for x,y in test:
@@ -126,7 +131,7 @@ for threshold in thrs:
         
             print(f" {name} {dist(x,y,threshold):2}",end="")
         print()
-                 
+"""
 """
 Salida del programa:
 

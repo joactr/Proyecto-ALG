@@ -29,14 +29,14 @@ def dp_restricted_damerau_backwards(x, y):
     prev2 = [(n) for n in range(tam_y)]
     prev1 = [(1) for k in range(tam_y)]
     current = [(2) for k in range(tam_y)]
-
-    for i in range(1, tam_y):
-        prev1[i] = min(
-            prev2[i] + 1,
-            prev2[i-1] if x[0] == y[i-1] else prev2[i-1] + 1, #sustitucion
-            prev1[i-1] + 1
-        )
-
+    if(len(x) >= 1):
+        for i in range(1, tam_y):
+            prev1[i] = min(
+                prev2[i] + 1,
+                prev2[i-1] if x[0] == y[i-1] else prev2[i-1] + 1, #sustitucion
+                prev1[i-1] + 1
+            )
+    else: return len(y)
     if (len(x) > 1 and len(y) > 1):
         for i in range(2, tam_x):
             for j in range(1, tam_y):
@@ -90,10 +90,11 @@ def dp_intermediate_damerau_backwards(x, y):
                     prev1[j] + 1,
                     prev1[j - 1] if x[i - 1] == y[j - 1] else prev1[j - 1] + 1,
                     current[j - 1] + 1,
-                    prev2[j - 3] + 2 if j > 0 and x[i - 2] == y[j - 1] and x[i - 1] == y[j - 3] else float("inf"),
-                    prev2[j - 2] + 1 if j > 0 and x[i - 2] == y[j - 1] and x[i - 1] == y[j - 2] else float("inf"),
-                    prev3[j - 2] + 2 if j > 0 and x[i - 3] == y[j - 1] and x[i - 1] == y[j - 2] else float("inf")
+                    prev2[j - 3] + 2 if j > 2 and x[i - 2] == y[j - 1] and x[i - 1] == y[j - 3] else float("inf"),
+                    prev2[j - 2] + 1 if j > 1 and x[i - 2] == y[j - 1] and x[i - 1] == y[j - 2] else float("inf"),
+                    prev3[j - 2] + 2 if j > 1 and x[i - 3] == y[j - 1] and x[i - 1] == y[j - 2] else float("inf")
                 )
+                # 0 0 0
 
         prev3 = prev2
         prev2 = prev1
