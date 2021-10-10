@@ -76,17 +76,17 @@ class SpellSuggester:
         if threshold==None: threshold = float("inf")
 
         for term_voc in self.vocabulary:
-            dist = 0
-            if abs(len(term) - len(term_voc)) <= threshold:  # Si la diferencia de tamaño es mayor al treshold, el termino no se tiene en cuenta
-                if distance == 'levenshtein':
-                    dist = tarea2.dp_levenshtein_threshold(term, term_voc, threshold)
-                elif distance == 'restricted':
-                    dist = tarea2.dp_restricted_damerau_threshold(term, term_voc, threshold)
-                else:
-                    dist = tarea2.dp_intermediate_damerau_threshold(term, term_voc, threshold)
-                
-                if dist <= threshold:
-                    results[term_voc] = dist
+            if abs(len(term) - len(term_voc)) > threshold:  # Si la diferencia de tamaño es mayor al treshold, el termino no se tiene en cuenta
+                dist = threshold + 8
+            if distance == 'levenshtein':
+                dist = tarea2.dp_levenshtein_threshold(term, term_voc, threshold)
+            elif distance == 'restricted':
+                dist = tarea2.dp_restricted_damerau_threshold(term, term_voc, threshold)
+            else:
+                dist = tarea2.dp_intermediate_damerau_threshold(term, term_voc, threshold)
+            
+            if dist <= threshold:
+                results[term_voc] = dist
 
         return results
 
@@ -101,7 +101,8 @@ class TrieSpellSuggester(SpellSuggester):
 if __name__ == "__main__":
 
     spellsuggester = SpellSuggester("./corpora/quijote.txt")
-    for distance in ['levenshtein','restricted','intermediate']:
+    #for distance in ['levenshtein','restricted','intermediate']:
+    for distance in ['intermediate']:  
         destiny =  f'result_{distance}_quijote.txt'
         with open(destiny, "w", encoding='utf-8') as fw:
             for palabra in ("casa", "senor", "jabón", "constitución", "ancho",
