@@ -12,19 +12,23 @@ def dp_levenshtein_trie(x, trie, th):
     current = np.zeros(states)
     pre = np.zeros(states)
 
+    #Recorremos todos los nodos del trie y asignamos un coste a cada prefijo
     for i in range(1, states): 
         current[i]= current[trie.get_parent(i)] + 1
 
+    #Vamos recorriendo las letras de la palabra x
     for i in range(1, tam_x + 1):
         pre[0] = i
+        #Para cada letra cogemos la operación de coste mínimo
         for j in range(1,states) :
             pre[j] = min(current[j] + 1,
                         pre[trie.get_parent(j)] + 1,
                         current[trie.get_parent(j)] if x[i-1] == trie.get_label(j) else current[trie.get_parent(j)] + 1
             )
-        if min(pre) > th: return {}
+        if min(pre) > th: return {} #Si supera el threshold salimos
         current, pre = pre, current
 
+    #Recorremos todos los estados, si son finales y menores que el threshold añadimos a result
     for i in range(states):
         if trie.is_final(i):
             if current[i] <= th: results[trie.get_output(i)] = current[i]
