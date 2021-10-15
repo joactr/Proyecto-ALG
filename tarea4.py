@@ -2,8 +2,34 @@ import numpy as np
 from trie import Trie
 
 def dp_levenshtein_trie(x, trie, th):
-    # TODO
-    return []
+    """
+    COMENTAR IGUAL QUE SAR Y ALGUN COMENTARIO DE LINEA
+    """
+    results = {}
+    if th == None: th = float("inf")
+    states = trie.get_num_states()
+    tam_x = len(x)
+    current = np.zeros(states)
+    pre = np.zeros(states)
+
+    for i in range(1, states): 
+        current[i]= current[trie.get_parent(i)] + 1
+
+    for i in range(1, tam_x + 1):
+        pre[0] = i
+        for j in range(1,states) :
+            pre[j] = min(current[j] + 1,
+                        pre[trie.get_parent(j)] + 1,
+                        current[trie.get_parent(j)] if x[i-1] == trie.get_label(j) else current[trie.get_parent(j)] + 1
+            )
+        if min(pre) > th: return {}
+        current, pre = pre, current
+
+    for i in range(states):
+        if trie.is_final(i):
+            if current[i] <= th: results[trie.get_output(i)] = current[i]
+
+    return results
 
 def dp_restricted_damerau_trie(x, trie, th):
     # TODO

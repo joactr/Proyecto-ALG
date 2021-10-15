@@ -4,7 +4,7 @@ def dp_levenshtein_threshold(x, y, th):
     tam_x = len(x) + 1
     tam_y = len(y) + 1 
     
-    pre = [(n) for n in range(tam_y)]
+    pre = [(n) for n in range(tam_y)] #Se puede usar np.arrange(...)
     current = [(1) for k in range(tam_y)]
     
     for i in range(1, tam_x):
