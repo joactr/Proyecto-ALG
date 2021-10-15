@@ -25,6 +25,7 @@ def dp_levenshtein_trie(x, trie, th):
                         pre[trie.get_parent(j)] + 1,
                         current[trie.get_parent(j)] if x[i-1] == trie.get_label(j) else current[trie.get_parent(j)] + 1
             )
+
         if min(pre) > th: return {} #Si supera el threshold salimos
         current, pre = pre, current
 
