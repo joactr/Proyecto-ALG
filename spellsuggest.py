@@ -97,7 +97,10 @@ class TrieSpellSuggester(SpellSuggester):
     def __init__(self, vocab_file_path):
         super().__init__(vocab_file_path)
         self.trie = Trie(self.vocabulary)
-    
+
+    def suggest(self, term):
+
+
 if __name__ == "__main__":
 
     spellsuggester = SpellSuggester("./corpora/quijote.txt")
