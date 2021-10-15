@@ -5,8 +5,8 @@ def dp_levenshtein_trie(x, trie, th):
     """
     COMENTAR IGUAL QUE SAR Y ALGUN COMENTARIO DE LINEA
     """
-    results = {}
     if th == None: th = float("inf")
+    results = {}
     states = trie.get_num_states()
     tam_x = len(x)
     current = np.zeros(states)
