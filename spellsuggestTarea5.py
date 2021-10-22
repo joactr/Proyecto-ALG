@@ -2,8 +2,10 @@
 import re
 import tarea2 
 from trie import Trie
-import json
 import numpy as np
+from time import process_time
+from collections import Counter
+
 
 class SpellSuggester:
 
@@ -11,7 +13,7 @@ class SpellSuggester:
     Clase que implementa el mÃ©todo suggest para la bÃºsqueda de tÃ©rminos.
     """
 
-    def __init__(self, vocab_file_path):
+    def __init__(self, vocab_file_path, tam_vocab):
         """MÃ©todo constructor de la clase SpellSuggester
 
         Construye una lista de tÃ©rminos Ãºnicos (vocabulario),
@@ -19,26 +21,34 @@ class SpellSuggester:
 
         Args:
             vocab_file (str): ruta del fichero de texto para cargar el vocabulario.
-
+            tam_vocab (int): número de palabras que deseamos que tenga el vocabulario
         """
 
-        self.vocabulary  = self.build_vocab(vocab_file_path, tokenizer=re.compile("\W+"))
+        self.vocabulary  = self.build_vocab(vocab_file_path, tam_vocab, tokenizer=re.compile("\W+"))
 
-    def build_vocab(self, vocab_file_path, tokenizer):
+    def build_vocab(self, vocab_file_path, tam_vocab, tokenizer):
         """MÃ©todo para crear el vocabulario.
 
         Se tokeniza por palabras el fichero de texto,
         se eliminan palabras duplicadas y se ordena
-        lexicográficamente.
+        por número de apariciones en el texto, además se devuelve
+        solo un numero limitado del vocabulario según "tam_vocab".
 
         Args:
             vocab_file (str): ruta del fichero de texto para cargar el vocabulario.
+            tam_vocab (int): número máximo de palabras que deseamos en el vocabulario
             tokenizer (re.Pattern): expresiÃ³n regular para la tokenizaciÃ³n.
         """
         with open(vocab_file_path, "r", encoding='utf-8') as fr:
-            vocab = set(tokenizer.split(fr.read().lower()))
-            vocab.discard('') # por si acaso
-            return sorted(vocab)
+            #Usamos un counter en vez de un set para poder contar el número de apariciones por palabra
+            count = Counter(tokenizer.split(fr.read().lower()))
+            if '' in count:
+                del count[''] #Por si acaso
+            reversed_count = [(freq, word) for (word,freq) in count.items()]
+            sorted_reversed = sorted(reversed_count, reverse=True)
+            sorted_vocab = [word for (freq,word) in sorted_reversed]
+            return sorted(sorted_vocab[0:tam_vocab])
+
     
     def cota(self, x, y):
         """
@@ -94,8 +104,8 @@ class TrieSpellSuggester(SpellSuggester):
     """
     Clase que implementa el mÃ©todo suggest para la bÃºsqueda de tÃ©rminos y aÃ±ade el trie
     """
-    def __init__(self, vocab_file_path):
-        super().__init__(vocab_file_path)
+    def __init__(self, vocab_file_path,tam_vocab):
+        super().__init__(vocab_file_path,tam_vocab)
         self.trie = Trie(self.vocabulary)
 
     def suggest(self, term, distance="levenshtein", th=None):
@@ -132,21 +142,32 @@ class TrieSpellSuggester(SpellSuggester):
 
 if __name__ == "__main__":
 
-    spellsuggester = SpellSuggester("./corpora/quijote.txt")
-    #for distance in ['levenshtein','restricted','intermediate']:
-    """for distance in ['intermediate']:  
-        destiny =  f'result_{distance}_quijote.txt'
-        with open(destiny, "w", encoding='utf-8') as fw:
-            for palabra in ("casa", "senor", "jabón", "constitución", "ancho",
-                            "savaedra", "vicios", "quixot", "s3afg4ew"):
-                for threshold in range(1, 6):
-                    resul = spellsuggester.suggest(palabra,distance=distance,threshold=threshold)
-                    numresul = len(resul)
-                    resul = " ".join(sorted(f'{v}:{k}' for k,v in resul.items()))
-                    fw.write(f'{palabra}\t{threshold}\t{numresul}\t{resul}\n')"""
-                    
-    spellsuggester = TrieSpellSuggester("./corpora/quijote.txt")
-    print(spellsuggester.suggest("alábese"))
+    tams_vocab = [1000,400000] #En total tiene 22942 palabras distintas el vocabulario
+    thresholds = [1,2,5,20]
+    terminos = ["alábese","diferencias","conquistar","ancho","senor"]
+
+    for size in tams_vocab:
+        spellsuggester = SpellSuggester("./corpora/quijote.txt", size)
+        for distance in ['levenshtein','restricted','intermediate']:
+            for palabra in terminos:
+                for threshold in thresholds:
+                    tstart = process_time()
+                    spellsuggester.suggest(palabra,distance=distance,threshold=threshold)
+                    tend = process_time() - tstart
+                    print('TIME: ' + str(tend) + ' usando ' + distance + ', tamaño: ' + str(size) + ' Threshold: ' + str(threshold) + ' Palabra:' + palabra)       
+
+    distance = "levenshtein"
+    for size in tams_vocab:
+        spellsuggester = TrieSpellSuggester("./corpora/quijote.txt",size)
+        for palabra in terminos:
+            for threshold in thresholds:
+                tstart = process_time()
+                spellsuggester.suggest(palabra,distance,threshold)
+                tend = process_time() - tstart
+                print('TIME: ' + str(tend) + ' usando Trie, tamaño: ' + str(size) + ' Threshold: ' + str(threshold) + ' Palabra:' + palabra)       
+
+    #spellsuggester = TrieSpellSuggester("./corpora/quijote.txt")
+    #print(spellsuggester.suggest("alábese"))
     # cuidado, la salida es enorme print(suggester.trie)
 
     
