@@ -30,9 +30,9 @@ class SpellSuggester:
         """MÃ©todo para crear el vocabulario.
 
         Se tokeniza por palabras el fichero de texto,
-        se eliminan palabras duplicadas y se ordena
-        por número de apariciones en el texto, además se devuelve
-        solo un numero limitado del vocabulario según "tam_vocab".
+        se eliminan palabras duplicadas y se devuelven las primeras
+        "tam_vocab" palabras por frecuencia de aparición ordenadas
+        lexicográficamente.
 
         Args:
             vocab_file (str): ruta del fichero de texto para cargar el vocabulario.
@@ -142,15 +142,15 @@ class TrieSpellSuggester(SpellSuggester):
 
 if __name__ == "__main__":
 
-    tams_vocab = [1000,400000] #En total tiene 22942 palabras distintas el vocabulario
+    tams_vocab = [1000,5000,100000,25000] #En total tiene 22942 palabras distintas el vocabulario
     thresholds = [1,2,5,20]
     terminos = ["alábese","diferencias","conquistar","ancho","senor"]
 
     for size in tams_vocab:
         spellsuggester = SpellSuggester("./corpora/quijote.txt", size)
-        for distance in ['levenshtein','restricted','intermediate']:
-            for palabra in terminos:
-                for threshold in thresholds:
+        for palabra in terminos:
+            for threshold in thresholds:
+                for distance in ['levenshtein','restricted','intermediate']:    
                     tstart = process_time()
                     spellsuggester.suggest(palabra,distance=distance,threshold=threshold)
                     tend = process_time() - tstart
