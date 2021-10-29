@@ -185,10 +185,15 @@ class SAR_Project:
         
         #Algoritmica
         if self.approximation is True:
+<<<<<<< HEAD
           if self.multifield is True:
             self.spellsuggester = SpellSuggester(vocab=self.index['article'].keys())
           else:
             self.spellsuggester = SpellSuggester(vocab=self.index.keys())
+=======
+          pass
+
+>>>>>>> 05093370636500d8fb6feda1292b1a34c220f8ea
         ##########################################
         ## COMPLETAR PARA FUNCIONALIDADES EXTRA ##
         ##########################################
