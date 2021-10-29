@@ -180,7 +180,7 @@ class SAR_Project:
           self.make_inverted_stems()
         
         if self.approximation is True:
-
+          pass
 
         ##########################################
         ## COMPLETAR PARA FUNCIONALIDADES EXTRA ##
