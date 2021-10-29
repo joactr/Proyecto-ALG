@@ -185,15 +185,11 @@ class SAR_Project:
         
         #Algoritmica
         if self.approximation is True:
-<<<<<<< HEAD
           if self.multifield is True:
             self.spellsuggester = SpellSuggester(vocab=self.index['article'].keys())
           else:
             self.spellsuggester = SpellSuggester(vocab=self.index.keys())
-=======
-          pass
 
->>>>>>> 05093370636500d8fb6feda1292b1a34c220f8ea
         ##########################################
         ## COMPLETAR PARA FUNCIONALIDADES EXTRA ##
         ##########################################
@@ -596,14 +592,15 @@ class SAR_Project:
                 res = []
           
         if self.use_approximation is True and res == []:
-          if self.multifield is True:
-            lista = self.spellsuggester.suggest(term)
-            for palabra in lista:
-              res = self.or_posting(res,self.index["article"][palabra])  
-          else:
-            lista = self.spellsuggester.suggest(term)
-            for palabra in lista:
-              res = self.or_posting(res,self.index[palabra])
+            if self.stemming is False:
+                  if self.multifield is True:
+                    lista = self.spellsuggester.suggest(term, self.approximation_distance, threshold=self.approximation_threshold)
+                    for palabra in lista:
+                      res = self.or_posting(res, self.index[field][palabra])
+                  else:
+                    lista = self.spellsuggester.suggest(term, self.approximation_distance , self.approximation_threshold)
+                    for palabra in lista:
+                      res = self.or_posting(res,self.index[palabra])
         
         return res
 
