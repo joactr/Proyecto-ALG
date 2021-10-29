@@ -49,6 +49,19 @@ if __name__ == "__main__":
     group1.add_argument('-T', '--test', dest='test', metavar= 'test', type=str, action='store',
                     help='file with queries and results, for testing.')
 
+    #MEJORAS AGREGADAS EN LA ASIGNATURA DE ALGORITMICA
+    algoritmica = parser.add_argument_group()
+
+    algoritmica.add_argument('-X', '--approximation', dest='approximation', action='store_true', default=False, 
+                    help='find approximate words to query')    
+
+    algoritmica.add_argument('-D', '--distance', dest='distance', action='store_true', default=False, 
+                    help='choose the distance algorithm (levenshtein, restricted, intermediate) Default: levenshtein')                   
+
+    algoritmica.add_argument('-H', '--threshold', dest='threshold', action='store_true', default=False, 
+                    help='choose the threshold for the distance algorithm. Default: 2') 
+
+
     args = parser.parse_args()
 
     with open(args.index, 'rb') as fh:
