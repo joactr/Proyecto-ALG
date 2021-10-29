@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from os import error
 import re
 import tarea2 
 from trie import Trie
@@ -11,7 +12,7 @@ class SpellSuggester:
     Clase que implementa el mÃ©todo suggest para la bÃºsqueda de tÃ©rminos.
     """
 
-    def __init__(self, vocab_file_path):
+    def __init__(self, vocab_file_path=None,vocab=None):
         """MÃ©todo constructor de la clase SpellSuggester
 
         Construye una lista de tÃ©rminos Ãºnicos (vocabulario),
@@ -19,12 +20,15 @@ class SpellSuggester:
 
         Args:
             vocab_file (str): ruta del fichero de texto para cargar el vocabulario.
-
         """
+        if vocab_file_path is None and vocab is not None: #Usamos lista para constructor
+            self.vocabulary  = self.build_vocab_list(vocab)
+        elif vocab is None and vocab_file_path is not None: #Usamos fichero como constructor
+            self.vocabulary  = self.build_vocab_file(vocab_file_path, tokenizer=re.compile("\W+"))
+        else:
+            raise Exception("Error")
 
-        self.vocabulary  = self.build_vocab(vocab_file_path, tokenizer=re.compile("\W+"))
-
-    def build_vocab(self, vocab_file_path, tokenizer):
+    def build_vocab_file(self, vocab_file_path, tokenizer):
         """MÃ©todo para crear el vocabulario.
 
         Se tokeniza por palabras el fichero de texto,
@@ -39,6 +43,18 @@ class SpellSuggester:
             vocab = set(tokenizer.split(fr.read().lower()))
             vocab.discard('') # por si acaso
             return sorted(vocab)
+
+    def build_vocab_list(self, vocab):
+        """MÃ©todo para crear el vocabulario.
+
+        Coge una lista dada de vocabulario y crea el spellsugester
+
+        Args:
+            vocab (lista): lista de palabras ya tokenizadas
+        """
+        vocab = set(vocab)
+        vocab.discard('') # por si acaso
+        return sorted(vocab)
     
     def cota(self, x, y):
         """

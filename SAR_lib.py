@@ -132,11 +132,14 @@ class SAR_Project:
         self.use_ranking = v
 
     #AGREGADO EN ALGORITMICA
-    def set_approximation(self, v, distance, threshold):
+    def set_approximation(self, v, distance,trie, threshold):
         """
         Activa o desactiva la aproximación de términos
         
         input: "v" booleano.
+              "distance" algoritmo de distancia entre cadenas a usar (string)
+              "trie" decide si se usa trie como estructura o no (booleano)
+              "threshold" distancia máxima a considerar entre cadenas (int)
 
         si self.use_approximation es True los términos de las consultas podrán aproximarse a otros similares
         por algoritmos de distancia si no se encuentran resultados de esos términos
@@ -144,6 +147,7 @@ class SAR_Project:
         """
         self.use_approximation = v
         self.approximation_distance = distance
+        self.use_trie = trie
         self.approximation_threshold = threshold
 
 
@@ -179,9 +183,12 @@ class SAR_Project:
           self.make_stemming()
           self.make_inverted_stems()
         
+        #Algoritmica
         if self.approximation is True:
-
-
+          if self.multifield is True:
+            self.spellsuggester = SpellSuggester(vocab=self.index['article'].keys())
+          else:
+            self.spellsuggester = SpellSuggester(vocab=self.index.keys())
         ##########################################
         ## COMPLETAR PARA FUNCIONALIDADES EXTRA ##
         ##########################################
@@ -533,6 +540,7 @@ class SAR_Project:
         ########################################
         ## COMPLETAR PARA TODAS LAS VERSIONES ##
         ########################################
+        res = []
         term = term.lower()
         if self.positional is True:
           if self.multifield is True:
@@ -546,14 +554,14 @@ class SAR_Project:
                 if self.index[field].get(term) is not None:
                   return self.index[field].get(term)
                 else:
-                  return []
+                  res = []
               else:
                 if term in list(self.index[field].keys()):
                   if list(self.index[field][term].keys()) is not None:
                     return list(self.index[field][term].keys())
                   else:
-                    return []
-                else: return []
+                    res = []
+                else: res = []
 
 
           else: #No usamos multifield pero sí positionals
@@ -563,7 +571,7 @@ class SAR_Project:
               if self.index.get(term) is not None:
                 return list(self.index[term].keys())
               else:
-                return []
+                res = []
         else: #No usamos positionals
           if self.multifield is True:
             if self.use_stemming is True:
@@ -572,7 +580,7 @@ class SAR_Project:
               if self.index[field].get(term) is not None:
                 return self.index[field].get(term)
               else:
-                return []
+                res = []
           else:
             if self.use_stemming is True:
               return self.get_stemming(term)
@@ -580,8 +588,20 @@ class SAR_Project:
               if self.index.get(term) is not None:
                 return self.index.get(term)
               else:
-                return []
-    
+                res = []
+          
+        if self.use_approximation is True and res == []:
+          if self.multifield is True:
+            lista = self.spellsuggester.suggest(term)
+            for palabra in lista:
+              res = self.or_posting(res,self.index["article"][palabra])  
+          else:
+            lista = self.spellsuggester.suggest(term)
+            for palabra in lista:
+              res = self.or_posting(res,self.index[palabra])
+        
+        return res
+
 
     def get_positionals(self, terms, field='article'):
         """
@@ -636,7 +656,7 @@ class SAR_Project:
               res.append(noticia)
 
         if res is None:
-          return []
+          res = []
         else:
           return res
         ########################################################
@@ -668,13 +688,13 @@ class SAR_Project:
             if self.stemmindex[field].get(stem) is not None:
                 return self.stemmindex[field].get(stem)
             else:
-                return []
+                res = []
         else:
           stem = self.stemmer.stem(term)
           if self.stemmindex.get(stem) is not None:
               return self.stemmindex.get(stem)
           else:
-              return []
+              res = []
 
         ####################################################
         ## COMPLETAR PARA FUNCIONALIDAD EXTRA DE STEMMING ##
@@ -742,7 +762,7 @@ class SAR_Project:
       posting = []
       i = 0 
       j = 0
-      if p1 is None and p2 is None: return []
+      if p1 is None and p2 is None: res = []
       while ((i < len(p1)) & (j < len(p2))):
         if p1[i] == p2[j]:
           posting.append(p2[j])
