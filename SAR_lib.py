@@ -5,7 +5,9 @@ from nltk.stem.snowball import SnowballStemmer
 import os
 import re
 
-from spellsuggest import SpellSuggester #Algoritmica
+#Algoritmica
+from spellsuggest import SpellSuggester 
+from spellsuggest import TrieSpellSuggester
 
 
 class SAR_Project:
@@ -165,6 +167,7 @@ class SAR_Project:
         self.positional = args['positional']
         self.stemming = args['stem']
         self.permuterm = args['permuterm']
+        self.approximation = args['approximation'] #Añadido en algoritmica
 
         for dir, subdirs, files in os.walk(root):
             for filename in files:
@@ -175,7 +178,9 @@ class SAR_Project:
         if self.stemming is True:
           self.make_stemming()
           self.make_inverted_stems()
-          
+        
+        if self.approximation is True:
+
 
         ##########################################
         ## COMPLETAR PARA FUNCIONALIDADES EXTRA ##
