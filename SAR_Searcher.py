@@ -55,10 +55,10 @@ if __name__ == "__main__":
     algoritmica.add_argument('-X', '--approximation', dest='approximation', action='store_true', default=False, 
                     help='find approximate words to query')    
 
-    algoritmica.add_argument('-D', '--distance', dest='distance', action='store_true', default=False, 
+    algoritmica.add_argument('-D', '--distance', dest='distance', action='store_true', default='levenshtein', 
                     help='choose the distance algorithm (levenshtein, restricted, intermediate) Default: levenshtein')                   
 
-    algoritmica.add_argument('-H', '--threshold', dest='threshold', action='store_true', default=False, 
+    algoritmica.add_argument('-H', '--threshold', dest='threshold', action='store_true', default='2', 
                     help='choose the threshold for the distance algorithm. Default: 2') 
 
 
@@ -71,6 +71,9 @@ if __name__ == "__main__":
     searcher.set_ranking(args.rank)
     searcher.set_showall(args.all)
     searcher.set_snippet(args.snippet)
+    #Algoritmica
+    searcher.set_approximation(args.approximation,args.distance,args.threshold)
+
 
 
     # se debe contar o mostrar resultados?

@@ -5,6 +5,8 @@ from nltk.stem.snowball import SnowballStemmer
 import os
 import re
 
+from spellsuggest import SpellSuggester #Algoritmica
+
 
 class SAR_Project:
     """
@@ -54,7 +56,9 @@ class SAR_Project:
         self.use_stemming = False # valor por defecto, se cambia con self.set_stemming()
         self.use_ranking = False  # valor por defecto, se cambia con self.set_ranking()
         self.tam_not = {} # hash que indica el tamaño en tokens de cada noticia, clave: termino, noticia: num_tokens
-        
+
+        #Variable añadida en Algoritmica
+        self.use_approximation = False # indica si se usará aproximación de terminos por distancias, se cambia con self.set_approximation()
 
         self.IdDoc = 0 # numero de documento (archivo .json)
         self.newid = 0 # numero de noticia
@@ -125,7 +129,20 @@ class SAR_Project:
         """
         self.use_ranking = v
 
+    #AGREGADO EN ALGORITMICA
+    def set_approximation(self, v, distance, threshold):
+        """
+        Activa o desactiva la aproximación de términos
+        
+        input: "v" booleano.
 
+        si self.use_approximation es True los términos de las consultas podrán aproximarse a otros similares
+        por algoritmos de distancia si no se encuentran resultados de esos términos
+
+        """
+        self.use_approximation = v
+        self.approximation_distance = distance
+        self.approximation_threshold = threshold
 
 
     ###############################
