@@ -600,17 +600,11 @@ class SAR_Project:
         if self.use_approximation is True and res == []:
             if self.stemming is False:
                   if self.multifield is True:
-                    if self.use_trie:
-                      pass
-                    else:
-                      lista = self.spellsuggester.suggest(term, self.approximation_distance, threshold=self.approximation_threshold)
+                    lista = self.spellsuggester.suggest(term, self.approximation_distance, threshold=self.approximation_threshold)
                     for palabra in lista:
                       res = self.or_posting(res, self.index[field][palabra])
                   else:
-                    if self.use_trie:
-                      pass
-                    else:
-                      lista = self.spellsuggester.suggest(term, self.approximation_distance , self.approximation_threshold)
+                    lista = self.spellsuggester.suggest(term, self.approximation_distance , self.approximation_threshold)
                     for palabra in lista:
                       res = self.or_posting(res,self.index[palabra])
         
