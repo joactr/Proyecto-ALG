@@ -110,8 +110,8 @@ class TrieSpellSuggester(SpellSuggester):
     """
     Clase que implementa el mÃ©todo suggest para la bÃºsqueda de tÃ©rminos y aÃ±ade el trie
     """
-    def __init__(self, vocab_file_path):
-        super().__init__(vocab_file_path)
+    def __init__(self, vocab_file_path=None, vocab=None):
+        super().__init__(vocab_file_path, vocab)
         self.trie = Trie(self.vocabulary)
 
     def suggest(self, term, distance="levenshtein", th=None):

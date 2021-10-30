@@ -186,9 +186,15 @@ class SAR_Project:
         #Algoritmica
         if self.approximation is True:
           if self.multifield is True:
-            self.spellsuggester = SpellSuggester(vocab=self.index['article'].keys())
+            if self.use_trie:
+              self.spellsuggester = TrieSpellSuggester(vocab=self.index['article'].keys())
+            else:
+              self.spellsuggester = SpellSuggester(vocab=self.index['article'].keys())
           else:
-            self.spellsuggester = SpellSuggester(vocab=self.index.keys())
+            if self.use_trie:
+              self.spellsuggester = TrieSpellSuggester(vocab=self.index.keys())
+            else:
+              self.spellsuggester = SpellSuggester(vocab=self.index.keys())
 
         ##########################################
         ## COMPLETAR PARA FUNCIONALIDADES EXTRA ##
@@ -590,15 +596,21 @@ class SAR_Project:
                 return self.index.get(term)
               else:
                 res = []
-          
+        
         if self.use_approximation is True and res == []:
             if self.stemming is False:
                   if self.multifield is True:
-                    lista = self.spellsuggester.suggest(term, self.approximation_distance, threshold=self.approximation_threshold)
+                    if self.use_trie:
+                      pass
+                    else:
+                      lista = self.spellsuggester.suggest(term, self.approximation_distance, threshold=self.approximation_threshold)
                     for palabra in lista:
                       res = self.or_posting(res, self.index[field][palabra])
                   else:
-                    lista = self.spellsuggester.suggest(term, self.approximation_distance , self.approximation_threshold)
+                    if self.use_trie:
+                      pass
+                    else:
+                      lista = self.spellsuggester.suggest(term, self.approximation_distance , self.approximation_threshold)
                     for palabra in lista:
                       res = self.or_posting(res,self.index[palabra])
         
