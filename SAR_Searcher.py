@@ -61,7 +61,7 @@ if __name__ == "__main__":
     algoritmica.add_argument('-I', '--trie', dest='trie', action='store_true', default=False, 
                     help='choose to use trie structure for vocabulary approximation')              
 
-    algoritmica.add_argument('-H', '--threshold', dest='threshold', action='store_true', default=2,
+    algoritmica.add_argument('-H', '--threshold', dest='threshold', type=int, default=2,
                     help='choose the threshold for the distance algorithm. Default: 2') 
 
 
