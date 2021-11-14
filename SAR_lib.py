@@ -552,11 +552,9 @@ class SAR_Project:
         if self.positional is True:
           if self.multifield is True:
             #Usamos positionals y multifield
-
             if self.use_stemming is True and positional is False:
               return self.get_stemming(term, field)
             else:
-
               if field == 'date':
                 if self.index[field].get(term) is not None:
                   return self.index[field].get(term)
@@ -569,8 +567,6 @@ class SAR_Project:
                   else:
                     res = []
                 else: res = []
-
-
           else: #No usamos multifield pero sí positionals
             if self.use_stemming is True:
               return self.get_stemming(term)
@@ -579,6 +575,7 @@ class SAR_Project:
                 return list(self.index[term].keys())
               else:
                 res = []
+
         else: #No usamos positionals
           if self.multifield is True:
             if self.use_stemming is True:
