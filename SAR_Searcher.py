@@ -55,7 +55,7 @@ if __name__ == "__main__":
     algoritmica.add_argument('-X', '--approximation', dest='approximation', action='store_true', default=False, 
                     help='find approximate words to query')    
 
-    algoritmica.add_argument('-D', '--distance', dest='distance', action='store_true', default='levenshtein', 
+    algoritmica.add_argument('-D', '--distance', dest='distance', type=str, default='levenshtein',
                     help='choose the distance algorithm (levenshtein, restricted, intermediate) Default: levenshtein')   
 
     algoritmica.add_argument('-I', '--trie', dest='trie', action='store_true', default=False, 
