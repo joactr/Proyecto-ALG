@@ -31,6 +31,9 @@ if __name__ == "__main__":
     parser.add_argument('-X', '--approximation', dest='approximation', action='store_true', default=False, 
                     help='compute approximate vocabulary')
 
+    parser.add_argument('-I', '--trie', dest='trie', action='store_true', default=False,
+                    help='use trie data structure for vocab')
+
     args = parser.parse_args()
 
     newsdir = args.newsdir

@@ -58,7 +58,7 @@ if __name__ == "__main__":
     algoritmica.add_argument('-D', '--distance', dest='distance', type=str, default='levenshtein',
                     help='choose the distance algorithm (levenshtein, restricted, intermediate) Default: levenshtein')   
 
-    algoritmica.add_argument('-I', '--trie', dest='trie', action='store_true', default=False, 
+    algoritmica.add_argument('-I', '--trie', dest='trie', action='store_true', default=False,
                     help='choose to use trie structure for vocabulary approximation')
 
     algoritmica.add_argument('-H', '--threshold', dest='threshold', type=int, default=2,

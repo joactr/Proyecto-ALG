@@ -132,7 +132,7 @@ class SAR_Project:
         self.use_ranking = v
 
     #AGREGADO EN ALGORITMICA
-    def set_approximation(self, v, distance,trie, threshold):
+    def set_approximation(self, v, distance, trie, threshold):
         """
         Activa o desactiva la aproximación de términos
         
@@ -172,6 +172,7 @@ class SAR_Project:
         self.stemming = args['stem']
         self.permuterm = args['permuterm']
         self.approximation = args['approximation'] #Añadido en algoritmica
+        self.use_trie = args['trie'] #Añadido en algoritmica
 
         for dir, subdirs, files in os.walk(root):
             for filename in files:
@@ -553,57 +554,70 @@ class SAR_Project:
           if self.multifield is True:
             #Usamos positionals y multifield
             if self.use_stemming is True and positional is False:
-              return self.get_stemming(term, field)
+              res = self.get_stemming(term, field)
             else:
               if field == 'date':
                 if self.index[field].get(term) is not None:
-                  return self.index[field].get(term)
+                  res = self.index[field].get(term)
                 else:
                   res = []
               else:
                 if term in list(self.index[field].keys()):
                   if list(self.index[field][term].keys()) is not None:
-                    return list(self.index[field][term].keys())
+                    res = list(self.index[field][term].keys())
                   else:
                     res = []
                 else: res = []
           else: #No usamos multifield pero sí positionals
             if self.use_stemming is True:
-              return self.get_stemming(term)
+              res = self.get_stemming(term)
             else:
               if self.index.get(term) is not None:
-                return list(self.index[term].keys())
+                res = list(self.index[term].keys())
               else:
                 res = []
 
         else: #No usamos positionals
           if self.multifield is True:
             if self.use_stemming is True:
-              return self.get_stemming(term, field)
+              res = self.get_stemming(term, field)
             else:
               if self.index[field].get(term) is not None:
-                return self.index[field].get(term)
+                res = self.index[field].get(term)
               else:
                 res = []
           else:
             if self.use_stemming is True:
-              return self.get_stemming(term)
+              res = self.get_stemming(term)
             else:
               if self.index.get(term) is not None:
-                return self.index.get(term)
+                res = self.index.get(term)
               else:
                 res = []
         
         if self.use_approximation is True and res == []:
-            if self.stemming is False:
-                  if self.multifield is True:
-                    lista = self.spellsuggester.suggest(term, self.approximation_distance, threshold=self.approximation_threshold)
-                    for palabra in lista:
-                      res = self.or_posting(res, self.index[field][palabra])
-                  else:
-                    lista = self.spellsuggester.suggest(term, self.approximation_distance , self.approximation_threshold)
-                    for palabra in lista:
-                      res = self.or_posting(res,self.index[palabra])
+            if self.positional:
+                if self.stemming is False:
+                    if self.multifield is True:
+                        lista = self.spellsuggester.suggest(term, self.approximation_distance,
+                                                            threshold=self.approximation_threshold)
+                        for palabra in lista:
+                            res = self.or_posting(res, list(self.index[field][palabra].keys()))
+                    else:
+                        lista = self.spellsuggester.suggest(term, self.approximation_distance,
+                                                            self.approximation_threshold)
+                        for palabra in lista:
+                            res = self.or_posting(res, list(self.index[palabra].keys()))
+            else:
+                if self.stemming is False:
+                      if self.multifield is True:
+                        lista = self.spellsuggester.suggest(term, self.approximation_distance, threshold=self.approximation_threshold)
+                        for palabra in lista:
+                          res = self.or_posting(res, self.index[field][palabra])
+                      else:
+                        lista = self.spellsuggester.suggest(term, self.approximation_distance , self.approximation_threshold)
+                        for palabra in lista:
+                          res = self.or_posting(res,self.index[palabra])
         
         return res
 
@@ -641,14 +655,14 @@ class SAR_Project:
 
         """
 
-        if postings[i] is not None:
+        if postings[i] is not None and not self.use_approximation:
           for noticia in postings[i]:
             pos = []
             for term in lista_terms:
               if self.multifield is True:
                 pos.append(list(self.index[field][term][noticia]))
               else:
-                pos.append(list(self.index[term][noticia]))
+                pos.append(self.index[term][noticia])
             j=0
             while j < len(pos):
               pos[j] = [x-j for x in pos[j]]
@@ -659,11 +673,13 @@ class SAR_Project:
               j+=1
             if len(pos[j]) != 0:
               res.append(noticia)
+        elif postings[i] is not None:
+            res.extend(postings[i])
 
         if res is None:
-          res = []
+            return []
         else:
-          return res
+            return res
         ########################################################
         ## COMPLETAR PARA FUNCIONALIDAD EXTRA DE POSICIONALES ##
         ########################################################
