@@ -594,7 +594,9 @@ class SAR_Project:
                 res = self.index.get(term)
               else:
                 res = []
-        
+
+
+        #Algoritmica
         if self.use_approximation is True and res == []:
             if self.positional:
                 if self.stemming is False:
@@ -716,10 +718,6 @@ class SAR_Project:
               return self.stemmindex.get(stem)
           else:
               res = []
-
-        ####################################################
-        ## COMPLETAR PARA FUNCIONALIDAD EXTRA DE STEMMING ##
-        ####################################################
 
 
     def get_permuterm(self, term, field='article'):

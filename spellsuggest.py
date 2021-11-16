@@ -92,8 +92,8 @@ class SpellSuggester:
         if threshold==None: threshold = float("inf")
 
         for term_voc in self.vocabulary:
-            if abs(len(term) - len(term_voc)) > threshold:  # Si la diferencia de tamaño es mayor al treshold, el termino no se tiene en cuenta
-                dist = threshold + 8
+            if abs(len(term) - len(term_voc)) > threshold :  # Si la diferencia de tamaño es mayor al treshold, el termino no se tiene en cuenta
+                dist = float("inf")
             if distance == 'levenshtein':
                 dist = tarea2.dp_levenshtein_threshold(term, term_voc, threshold)
             elif distance == 'restricted':
