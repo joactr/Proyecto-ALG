@@ -92,7 +92,7 @@ for threshold in thrs:
                     ):
             print(f"\t{x:12} \t{name}\t", end="")
             print(dist(x, trie, threshold))
-                 
+
 """
 Salida del programa:
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from os import error
 import re
-import tarea2 
+import tarea2
 from trie import Trie
 import json
 import numpy as np
@@ -74,7 +74,7 @@ class SpellSuggester:
 
     def suggest(self, term, distance="levenshtein", threshold=None):
 
-        """MÃ©todo para sugerir palabras similares siguiendo la tarea 3.
+        """Metodo para sugerir palabras similares siguiendo la tarea 3.
 
         A completar.
 
@@ -92,7 +92,8 @@ class SpellSuggester:
         if threshold==None: threshold = float("inf")
 
         for term_voc in self.vocabulary:
-            if abs(len(term) - len(term_voc)) > threshold :  # Si la diferencia de tamaño es mayor al treshold, el termino no se tiene en cuenta
+            # Si la diferencia de tamaño es mayor al treshold, el termino no se tiene en cuenta o si la cota optimista es mayor
+            if abs(len(term) - len(term_voc)) > threshold or cota(term,term_voc) > threshold:
                 dist = float("inf")
             if distance == 'levenshtein':
                 dist = tarea2.dp_levenshtein_threshold(term, term_voc, threshold)
@@ -108,43 +109,81 @@ class SpellSuggester:
 
 class TrieSpellSuggester(SpellSuggester):
     """
-    Clase que implementa el mÃ©todo suggest para la bÃºsqueda de tÃ©rminos y aÃ±ade el trie
+    Clase que implementa el metodo suggest para la busqueda de terminos y añade el trie
     """
     def __init__(self, vocab_file_path=None, vocab=None):
         super().__init__(vocab_file_path, vocab)
         self.trie = Trie(self.vocabulary)
 
     def suggest(self, term, distance="levenshtein", threshold=None):
-        if threshold == None: threshold = float("inf")
-        results = {}
-        states = self.trie.get_num_states()
-        tam_x = len(term)
-        current = np.zeros(states)
-        pre = np.zeros(states)
+        if distance == "levenshtein":
+            if threshold == None: threshold = float("inf")
+            results = {}
+            states = self.trie.get_num_states()
+            tam_x = len(term)
+            current = np.zeros(states)
+            pre = np.zeros(states)
 
-        #Recorremos todos los nodos del trie y asignamos un coste a cada prefijo
-        for i in range(1, states): 
-            current[i]= current[self.trie.get_parent(i)] + 1
+            #Recorremos todos los nodos del trie y asignamos un coste a cada prefijo
+            for i in range(1, states):
+                current[i]= current[self.trie.get_parent(i)] + 1
 
-        #Vamos recorriendo las letras de la palabra x
-        for i in range(1, tam_x + 1):
-            pre[0] = i
-            #Para cada letra cogemos la operación de coste mínimo
-            for j in range(1,states) :
-                pre[j] = min(current[j] + 1,
-                            pre[self.trie.get_parent(j)] + 1,
-                            current[self.trie.get_parent(j)] if term[i-1] == self.trie.get_label(j) else current[self.trie.get_parent(j)] + 1
-                )
+            #Vamos recorriendo las letras de la palabra x
+            for i in range(1, tam_x + 1):
+                pre[0] = i
+                #Para cada letra cogemos la operación de coste mínimo
+                for j in range(1,states) :
+                    pre[j] = min(current[j] + 1,
+                                pre[self.trie.get_parent(j)] + 1,
+                                current[self.trie.get_parent(j)] if term[i-1] == self.trie.get_label(j) else current[self.trie.get_parent(j)] + 1
+                    )
 
-            if min(pre) > threshold: return {} #Si supera el threshold salimos
-            current, pre = pre, current
+                if min(pre) > threshold: return {} #Si supera el threshold salimos
+                current, pre = pre, current
 
-        #Recorremos todos los estados, si son finales y menores que el threshold añadimos a result
-        for i in range(states):
-            if self.trie.is_final(i):
-                if current[i] <= threshold: results[self.trie.get_output(i)] = current[i]
+            #Recorremos todos los estados, si son finales y menores que el threshold añadimos a result
+            for i in range(states):
+                if self.trie.is_final(i):
+                    if current[i] <= threshold: results[self.trie.get_output(i)] = current[i]
 
-        return results
+            return results
+
+        elif distance == "restricted":
+            x = term
+            d = np.zeros((self.trie.get_num_states() + 1, len(x) + 1))
+            results = {}
+
+
+            for i in range(1, self.trie.get_num_states() + 1):
+                d[i, 0] = d[self.trie.get_parent(i), 0] + 1
+
+            for j in range(1, len(x) + 1):
+                d[0, j] = d[0, j - 1] + 1
+
+                for i in range(1, self.trie.get_num_states() + 1):
+                    d[i, j] = min(
+                        d[self.trie.get_parent(i), j] + 1,
+                        d[i, j - 1] + 1,
+                        d[self.trie.get_parent(i), j - 1] + (self.trie.get_label(i) != x[j - 1])
+                    )
+
+                    if i > 1 and j > 1 and x[j - 2] == self.trie.get_label(i) and x[j - 1] == self.trie.get_label(
+                            self.trie.get_parent(i)):
+                        d[i, j] = min(
+                            d[i, j],
+                            d[self.trie.get_parent(self.trie.get_parent(i)), j - 2] + 1
+                        )
+
+                if (min(d[:, j]) > threshold):
+                    return threshold + 1
+
+            for i in range(self.trie.get_num_states()):
+                if self.trie.is_final(i):
+                    if d[i, len(x)] <= threshold: results[self.trie.get_output(i)] = d[i, len(x)]
+            return results
+        else:
+            print("Distancia Damerau-Levenshtein intermedia no implementada con trie")
+            return {}
 
 if __name__ == "__main__":
 
