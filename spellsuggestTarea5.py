@@ -142,7 +142,7 @@ class TrieSpellSuggester(SpellSuggester):
 
 if __name__ == "__main__":
 
-    tams_vocab = [1000,5000,10000,25000] #En total tiene 22942 palabras distintas el vocabulario
+    tams_vocab = [1000,5000,10000,25000] #En total tiene 22942 palabras distintas el vocabulario de quijote.txt
     thresholds = [1,2,5,20]
     terminos = ["alábese","diferencias","conquistar","ancho","senor"]
 

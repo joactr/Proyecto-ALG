@@ -3,7 +3,9 @@ from trie import Trie
 
 def dp_levenshtein_trie(x, trie, th):
     """
-    COMENTAR IGUAL QUE SAR Y ALGUN COMENTARIO DE LINEA
+    Encuentra la distancia de edición de Levenshtein entre dos cadenas x e y
+    Los resultados devueltos están limitados a una distancia de edición th
+    Hace uso de la estructura de datos trie (árbol de prefijos)
     """
     if th == None: th = float("inf")
     results = {}
@@ -21,9 +23,9 @@ def dp_levenshtein_trie(x, trie, th):
         pre[0] = i
         #Para cada letra cogemos la operación de coste mínimo
         for j in range(1,states) :
-            pre[j] = min(current[j] + 1,
-                        pre[trie.get_parent(j)] + 1,
-                        current[trie.get_parent(j)] if x[i-1] == trie.get_label(j) else current[trie.get_parent(j)] + 1
+            pre[j] = min(current[j] + 1, #insercion
+                        pre[trie.get_parent(j)] + 1, #borrado
+                        current[trie.get_parent(j)] if x[i-1] == trie.get_label(j) else current[trie.get_parent(j)] + 1 #sustitucion
             )
 
         if min(pre) > th: return {} #Si supera el threshold salimos

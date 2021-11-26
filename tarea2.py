@@ -1,6 +1,10 @@
 
 
 def dp_levenshtein_threshold(x, y, th):
+    """
+    Se permite insertar, borrar y sustituir
+    Consta de un threshold que limita los resultados obtenidos a una distancia de edición (th)
+    """
     tam_x = len(x) + 1
     tam_y = len(y) + 1 
     
@@ -24,6 +28,10 @@ def dp_levenshtein_threshold(x, y, th):
 
 
 def dp_restricted_damerau_threshold(x, y, th):
+    """
+    Se permite insertar, borrar, sustituir e intercambiar, pero tras intercambiar no se puede operar con esos símbolos
+    Consta de un threshold que limita los resultados obtenidos a una distancia de edición (th)
+    """
     tam_x = len(x) + 1
     tam_y = len(y) + 1
     prev2 = [(n) for n in range(tam_y)]
@@ -57,6 +65,14 @@ def dp_restricted_damerau_threshold(x, y, th):
     return prev1[tam_y - 1]
 
 def dp_intermediate_damerau_threshold(x, y, th):
+    """
+    Se permite insertar, borrar, sustituir e intercambiar, y tras el intercambio podemos realizar edición tal que:
+        ab ↔ ba coste 1
+        acb ↔ ba coste 2
+        ab ↔ bca coste 2
+
+    Consta de un threshold que limita los resultados obtenidos a una distancia de edición (th)
+    """
     tam_x = len(x) + 1
     tam_y = len(y) + 1
     prev3 = [(n) for n in range(tam_y)]

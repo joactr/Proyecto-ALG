@@ -3,6 +3,9 @@ import numpy as np
 
 
 def dp_levenshtein_backwards(x, y):
+    """
+    Se permite insertar, borrar y sustituir
+    """
     tam_x = len(x) + 1
     tam_y = len(y) + 1 
     
@@ -13,9 +16,9 @@ def dp_levenshtein_backwards(x, y):
         for j in range(1, tam_y):
             k = j
             current[j] = min(
-                pre[k] + 1, 
+                pre[k] + 1, #borrado
                 pre[k-1] if x[i - 1] == y[j - 1] else  pre[k-1] + 1, #sustitucion
-                current[j-1] + 1
+                current[j-1] + 1 #insercion
             )
             k += 1
         pre = current
@@ -24,6 +27,9 @@ def dp_levenshtein_backwards(x, y):
 
 
 def dp_restricted_damerau_backwards(x, y):
+    """
+    Se permite insertar, borrar, sustituir e intercambiar, pero tras intercambiar no se puede operar con esos símbolos
+    """
     tam_x = len(x) + 1
     tam_y = len(y) + 1
     prev2 = [(n) for n in range(tam_y)]
@@ -44,7 +50,7 @@ def dp_restricted_damerau_backwards(x, y):
                     prev1[j] + 1,
                     prev1[j-1] if x[i - 1] == y[j - 1] else prev1[j-1] + 1, #sustitucion
                     current[j-1] + 1, 
-                    prev2[j - 2] + 1 if x[i - 2] == y[j - 1] and x[i - 1] == y[j - 2] else float("inf")
+                    prev2[j - 2] + 1 if x[i - 2] == y[j - 1] and x[i - 1] == y[j - 2] else float("inf") #intercambio
                 )
                 
             prev2, prev1 = prev1, current
@@ -54,6 +60,12 @@ def dp_restricted_damerau_backwards(x, y):
     
 
 def dp_intermediate_damerau_backwards(x, y):
+    """
+    Se permite insertar, borrar, sustituir e intercambiar, y tras el intercambio podemos realizar edición tal que:
+        ab ↔ ba coste 1
+        acb ↔ ba coste 2
+        ab ↔ bca coste 2
+    """
     tam_x = len(x) + 1
     tam_y = len(y) + 1
     prev3 = [(n) for n in range(tam_y)]
@@ -81,7 +93,7 @@ def dp_intermediate_damerau_backwards(x, y):
                     prev2[j] + 1,
                     prev2[j - 1] if x[1] == y[j - 1] else prev2[j - 1] + 1,
                     prev1[j - 1] + 1,
-                    prev3[j - 2] + 1 if x[0] == y[j - 1] and x[1] == y[j - 2] else float("inf")
+                    prev3[j - 2] + 1 if x[0] == y[j - 1] and x[1] == y[j - 2] else float("inf") #intercambio
                 )
             
     for i in range(3, tam_x):
@@ -94,7 +106,6 @@ def dp_intermediate_damerau_backwards(x, y):
                     prev2[j - 2] + 1 if j > 1 and x[i - 2] == y[j - 1] and x[i - 1] == y[j - 2] else float("inf"),
                     prev3[j - 2] + 2 if j > 1 and x[i - 3] == y[j - 1] and x[i - 1] == y[j - 2] else float("inf")
                 )
-                # 0 0 0
 
         prev3 = prev2
         prev2 = prev1
