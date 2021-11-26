@@ -132,13 +132,12 @@ class SAR_Project:
         self.use_ranking = v
 
     #AGREGADO EN ALGORITMICA
-    def set_approximation(self, v, distance, trie, threshold):
+    def set_approximation(self, v, distance, threshold):
         """
         Activa o desactiva la aproximación de términos
         
         input: "v" booleano.
               "distance" algoritmo de distancia entre cadenas a usar (string)
-              "trie" decide si se usa trie como estructura o no (booleano)
               "threshold" distancia máxima a considerar entre cadenas (int)
 
         si self.use_approximation es True los términos de las consultas podrán aproximarse a otros similares
@@ -147,7 +146,6 @@ class SAR_Project:
         """
         self.use_approximation = v
         self.approximation_distance = distance
-        self.use_trie = trie
         self.approximation_threshold = threshold
 
 

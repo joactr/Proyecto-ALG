@@ -58,12 +58,10 @@ if __name__ == "__main__":
     algoritmica.add_argument('-D', '--distance', dest='distance', type=str, default='levenshtein',
                     help='choose the distance algorithm (levenshtein, restricted, intermediate) Default: levenshtein')   
 
-    algoritmica.add_argument('-I', '--trie', dest='trie', action='store_true', default=False,
-                    help='choose to use trie structure for vocabulary approximation')
-
     algoritmica.add_argument('-H', '--threshold', dest='threshold', type=int, default=2,
                     help='choose the threshold for the distance algorithm. Default: 2') 
 
+    #La estructura trie se usará en caso de haberse indexado de esa forma. En caso contrario se usarán vectores
 
     args = parser.parse_args()
 
@@ -75,7 +73,7 @@ if __name__ == "__main__":
     searcher.set_showall(args.all)
     searcher.set_snippet(args.snippet)
     #Algoritmica
-    searcher.set_approximation(args.approximation,args.distance,args.trie,args.threshold)
+    searcher.set_approximation(args.approximation,args.distance,args.threshold)
 
 
 

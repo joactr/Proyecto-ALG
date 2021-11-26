@@ -114,8 +114,8 @@ class TrieSpellSuggester(SpellSuggester):
         super().__init__(vocab_file_path, vocab)
         self.trie = Trie(self.vocabulary)
 
-    def suggest(self, term, distance="levenshtein", th=None):
-        if th == None: th = float("inf")
+    def suggest(self, term, distance="levenshtein", threshold=None):
+        if threshold == None: threshold = float("inf")
         results = {}
         states = self.trie.get_num_states()
         tam_x = len(term)
@@ -136,13 +136,13 @@ class TrieSpellSuggester(SpellSuggester):
                             current[self.trie.get_parent(j)] if term[i-1] == self.trie.get_label(j) else current[self.trie.get_parent(j)] + 1
                 )
 
-            if min(pre) > th: return {} #Si supera el threshold salimos
+            if min(pre) > threshold: return {} #Si supera el threshold salimos
             current, pre = pre, current
 
         #Recorremos todos los estados, si son finales y menores que el threshold añadimos a result
         for i in range(states):
             if self.trie.is_final(i):
-                if current[i] <= th: results[self.trie.get_output(i)] = current[i]
+                if current[i] <= threshold: results[self.trie.get_output(i)] = current[i]
 
         return results
 

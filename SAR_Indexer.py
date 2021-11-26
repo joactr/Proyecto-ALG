@@ -27,7 +27,7 @@ if __name__ == "__main__":
     parser.add_argument('-O', '--positional', dest='positional', action='store_true', default=False, 
                     help='compute positional index.')
 
-    #ARGUMENTO AÑADIDO EN ALGORITMICA
+    #ARGUMENTOS AÑADIDOS EN ALGORITMICA
     parser.add_argument('-X', '--approximation', dest='approximation', action='store_true', default=False, 
                     help='compute approximate vocabulary')
 
