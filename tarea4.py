@@ -39,8 +39,36 @@ def dp_levenshtein_trie(x, trie, th):
     return results
 
 def dp_restricted_damerau_trie(x, trie, th):
-    # TODO
-    return []
+    d = np.zeros((trie.get_num_states() + 1, len(x) + 1))
+    results = {}
+
+    for i in range(1, trie.get_num_states() + 1):
+        d[i, 0] = d[trie.get_parent(i), 0] + 1
+
+    for j in range(1, len(x) + 1):
+        d[0, j] = d[0, j - 1] + 1
+
+        for i in range(1, trie.get_num_states() + 1):
+            d[i, j] = min(
+                d[trie.get_parent(i), j] + 1,
+                d[i, j - 1] + 1,
+                d[trie.get_parent(i), j - 1] + (trie.get_label(i) != x[j - 1])
+            )
+
+            if i > 1 and j > 1 and x[j - 2] == trie.get_label(i) and x[j - 1] == trie.get_label(
+                    trie.get_parent(i)):
+                d[i, j] = min(
+                    d[i, j],
+                    d[trie.get_parent(trie.get_parent(i)), j - 2] + 1
+                )
+
+        if (min(d[:, j]) > th):
+            return th + 1
+
+    for i in range(trie.get_num_states()):
+        if trie.is_final(i):
+            if d[i, len(x)] <= th: results[trie.get_output(i)] = d[i, len(x)]
+    return results
 
 def dp_intermediate_damerau_trie(x, trie, th):
     # TODO
